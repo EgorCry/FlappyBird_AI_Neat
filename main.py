@@ -30,6 +30,9 @@ BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join('Images', 'bg.p
 STAT_FONT = pygame.font.SysFont('comicsans', 50)
 
 class Bird:
+    """
+    Bird class representing the flappy bird
+    """
     IMGS = BIRD_IMGS
     MAX_ROTATION = 25
     ROT_VEL = 20
@@ -119,6 +122,9 @@ class Bird:
 
 
 class Pipe:
+    """
+    represents a pipe object
+    """
     GAP = 200
     VEL = 5
 
@@ -172,6 +178,9 @@ class Pipe:
 
 
 class Base:
+    """
+    represents a base (moving floor) object
+    """
     VEL = 5
     WIDTH = BASE_IMG.get_width()
     IMG = BASE_IMG
@@ -197,6 +206,11 @@ class Base:
             self.x2 = self.x1 + self.WIDTH
 
     def draw(self, win):
+        """
+        Draw the floor. This is two images that move together.
+        :param win: the pygame surface/window
+        :return: None
+        """
         win.blit(self.IMG, (self.x1, self.y))
         win.blit(self.IMG, (self.x2, self.y))
 
@@ -282,8 +296,10 @@ def main(genomes, config):
             bird.move()
             ge[x].fitness += .1
 
+            # send bird location, top pipe location and bottom pipe location and determine from network whether to jump or not
             output = nets[x].activate((bird.y, abs(bird.y - pipes[pipe_ind].height), abs(bird.y - pipes[pipe_ind].bottom)))
 
+            # we use a tanh activation function so result will be between -1 and 1. if over 0.5 jump
             if output[0] > 0.5:
                 bird.jump()
 
@@ -327,13 +343,18 @@ def main(genomes, config):
                 ge.pop(x)
 
         # We stop the programme after the bird reaches 50 scores
-        if score > 50:
+        if score > 10:
             break
 
         draw_window(win, birds, pipes, base, score, GEN)
 
 
 def run(config_path):
+    """
+    runs the NEAT algorithm to train a neural network to play flappy bird.
+    :param config_file: location of config file
+    :return: None
+    """
     config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
                                 config_path)
@@ -347,8 +368,14 @@ def run(config_path):
     # We start the main program for 50 times (generations)
     winner = p.run(main, 50)
 
+    # show final stats
+    print('\nBest genome:\n{!s}'.format(winner))
+
 
 if __name__ == '__main__':
+    # Determine path to configuration file. This path manipulation is
+    # here so that the script will run successfully regardless of the
+    # current working directory.
     local_directory = os.path.dirname(__file__)
     config_path = os.path.join(local_directory, 'config_feedforward.txt')
     run(config_path)
