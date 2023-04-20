@@ -19,7 +19,7 @@ import neat
 
 ## Explanation
 
-This is Flappy Bird with the help of AI. I've used Python, Pyagem and Neat for this one. In Images you can find sprites. All hard parts are in commentaries
+This is Flappy Bird with the help of AI. I've used Python, Pygame and Neat for this one. In Images you can find sprites. All hard parts are in commentaries
 
 ![Capture](https://user-images.githubusercontent.com/68854878/134802592-adc0740c-673b-4816-8dc6-07f5c3cffbe6.PNG)
 
